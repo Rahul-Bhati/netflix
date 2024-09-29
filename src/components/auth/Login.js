@@ -1,75 +1,50 @@
 import React, { useRef, useState } from 'react'
-import { authentication } from '../../utils/authentication'
+import { verifyEmailAndPassword, signIn, signUp } from '../../utils/authentication'
 import Header from '../Header'
 import { bg_imag } from '../../utils/constant'
-import { auth } from '../../utils/firebase'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { useDispatch } from 'react-redux'
-import { setUser } from '../../store/userSlice'
 
 const Login = () => {
     const [isSignin, setIsSignin] = useState(true);
     const [isError, setIsError] = useState(null);
 
-    const dispatch = useDispatch();
-
     let name = useRef(null);
     let email = useRef(null);
     let password = useRef(null);
 
-    const handleSignIn = (e) => {
+    const handleSignIn = async (e) => {
         e.preventDefault()
-        const msg = authentication({ email: email.current.value, password: password.current.value });
+        const msg = verifyEmailAndPassword({ email: email.current.value, password: password.current.value });
         setIsError(msg);
 
-        if (msg === null) {
-            if (isSignin) {
-                signInWithEmailAndPassword(auth, email.current.value, password.current.value)
-                    .then((userCredential) => {
-                        // Signed in 
-                        const user = userCredential.user;
-                        // redux show error for serializable object that's why we need to create a serializable object
-                        const serializableUser = {
-                            uid: user.uid,
-                            email: user.email,
-                            displayName: user.displayName,
-                            img: "https://wallpapers.com/images/high/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.webp"
-                            // Add other serializable properties as needed
-                        };
-                        dispatch(setUser(serializableUser));
-                        console.log(user)
-                    }).catch((error) => {
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        // ..
-                    });
-            }
-            else {
-                createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
-                    .then((userCredential) => {
-                        // Signed in 
-                        const user = userCredential.user;
-                        // redux show error for serializable object that's why we need to create a serializable object
-                        const serializableUser = {
-                            uid: user.uid,
-                            email: user.email,
-                            displayName: user.displayName,
-                            img: "https://wallpapers.com/images/high/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.webp"
-                            // Add other serializable properties as needed
-                        };
-                        dispatch(setUser(serializableUser));
-                        console.log(user)
-                    }).catch((error) => {
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        // ..
-                    });
-            }
+        if (msg) return;
 
-            console.log(email.current.value, password.current.value)
+        if (isSignin) {
+            const user = await signIn(email.current.value, password.current.value);
+            if (user.error) {
+                setIsError(user.msg);
+                return;
+            }
+            // dispatch(setUser(user));
+            // console.log("user", user);
         }
-        else console.log("isError", isError)
+        else {
+            if (name.current.value === "") {
+                setIsError("Name is required");
+                return;
+            }
+            const user = await signUp(name.current.value, email.current.value, password.current.value);
+            if (user.error) {
+                setIsError(user.msg);
+                return;
+            }
+            // dispatch(setUser(user));
+            // console.log("user", user);
+        }
+    }
 
+    const handleStateOfSignIn = () => {
+        setIsError(null);
+        setIsSignin(!isSignin);
     }
 
     return (
@@ -86,13 +61,15 @@ const Login = () => {
                                 <input type='email' ref={email} placeholder='Email' className='p-2 mt-5 rounded-md bg-gray-900 text-white' />
                                 <p className="text-red-500 text-sm">{isError}</p>
                                 <input type='password' ref={password} placeholder='Password' className='p-2 mt-5 rounded-md bg-gray-900 text-white' autoComplete="" />
-                                <button className='bg-red-600 text-white p-2 mt-5 rounded-md' onClick={handleSignIn}>Sign In</button>
+                                <button className='bg-red-600 text-white p-2 mt-5 rounded-md' onClick={handleSignIn}>
+                                    {isSignin ? "Sign In" : "Sign Up"}
+                                </button>
                             </form>
                             <p className='text-white mt-5'>
                                 {isSignin ? (
-                                    <>New to Netflix? <button className='text-red-600 cursor-pointer' onClick={() => setIsSignin(false)}>Sign up now.</button></>
+                                    <>New to Netflix? <button className='text-red-600 cursor-pointer' onClick={handleStateOfSignIn}>Sign up now.</button></>
                                 ) : (
-                                    <>Already a member? <button className='text-red-600 cursor-pointer' onClick={() => setIsSignin(true)}>Sign in now.</button></>
+                                    <>Already a member? <button className='text-red-600 cursor-pointer' onClick={handleStateOfSignIn}>Sign in now.</button></>
                                 )}
                             </p>
                         </div>

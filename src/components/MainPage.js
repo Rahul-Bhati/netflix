@@ -1,21 +1,10 @@
 import React from 'react'
-import { bg_imag } from '../utils/constant'
-import Login from './auth/Login'
+import Header from './Header'
 
 const MainPage = () => {
     return (
-        // <div className='w-full h-screen'>
-        //     <img src={bg_imag} alt='netflix logo' className='object-cover' />
-        //     <div className='relative'>
-        //         <Login />
-        //     </div>
-        // </div>
-
-        <div className='w-full h-screen'>
-            <img src={bg_imag} alt='netflix logo' className='w-full h-full object-cover' />
-            <div className='relative'>
-                <Login />
-            </div>
+        <div>
+            <Header />
         </div>
     )
 }
