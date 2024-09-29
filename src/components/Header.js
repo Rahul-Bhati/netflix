@@ -15,7 +15,7 @@ const Header = () => {
     // console.log(user)
 
     useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 dispatch(setUser({
                     uid: user.uid,
@@ -29,6 +29,12 @@ const Header = () => {
                 navigate('/')
             }
         });
+
+        // this will unsubscribe the listener when the component unmounts
+        // why we need to unsubscribe the listener?
+        // because if we don't unsubscribe the listener, it will keep listening for the changes in the authentication state
+        // and if the listener is not unsubscribed, it will keep listening for the changes in the authentication state
+        return () => unsubscribe();
     }, [dispatch, navigate]);
 
     const handleSignOut = () => {
