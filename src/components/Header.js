@@ -12,8 +12,6 @@ const Header = () => {
     const navigate = useNavigate();
     const user = useSelector(appStore => appStore.user);
 
-    // console.log(user)
-
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -47,7 +45,7 @@ const Header = () => {
 
     return (
         <>
-            <header className='fixed w-full bg-gradient-to-b from-black p-3 flex justify-between' >
+            <header className='fixed w-full bg-gradient-to-b from-black p-3 flex justify-between z-20 pl-20' >
                 <img src={logo} alt='netflix logo' className='w-44 ' />
                 {user &&
                     <div>

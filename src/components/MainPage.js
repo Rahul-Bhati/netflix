@@ -1,23 +1,20 @@
-import React, { useEffect } from 'react'
 import Header from './Header'
 import useNowPlaying from '../hooks/useNowPlaying'
 import TrailerContainer from './TrailerContainer';
-import MovieLists from './MovieLists';
+import MovieListsContainer from './MovieListsContainer';
 
 const MainPage = () => {
 
+
     useNowPlaying();
     return (
-        <>
+        <div className='bg-black'>
             <Header />
-            <div>
-                <TrailerContainer />
-                <div>
 
-                </div>
-            </div>
-            <MovieLists />
-        </>
+            <TrailerContainer />
+
+            <MovieListsContainer />
+        </div>
     )
 }
 

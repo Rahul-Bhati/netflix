@@ -24,8 +24,6 @@ const Login = () => {
                 setIsError(user.msg);
                 return;
             }
-            // dispatch(setUser(user));
-            // console.log("user", user);
         }
         else {
             if (name.current.value === "") {
@@ -37,8 +35,6 @@ const Login = () => {
                 setIsError(user.msg);
                 return;
             }
-            // dispatch(setUser(user));
-            // console.log("user", user);
         }
     }
 
